@@ -9,7 +9,7 @@ using Content.Shared.Weapons.Marker;
 // Lavaland Change
 using Content.Server._Lavaland.Pressure;
 using Content.Shared._Lavaland.Weapons.Marker;
-// using Content.Shared._White.BackStab; -- Can someone PLEASE implement this
+using Content.Shared._White.BackStab;
 using Content.Shared.Damage;
 using Content.Shared.Stunnable;
 
@@ -20,7 +20,7 @@ public sealed class DamageMarkerSystem : SharedDamageMarkerSystem
     // Lavaland Change Start
     [Dependency] private readonly PressureEfficiencyChangeSystem _pressure = default!;
 //
-// \    [Dependency] private readonly BackStabSystem _backstab = default!;
+    [Dependency] private readonly BackStabSystem _backstab = default!;
     [Dependency] private readonly SharedStunSystem _stun = default!;
     [Dependency] private readonly DamageableSystem _damageable = default!;
     public override void Initialize()
@@ -43,13 +43,13 @@ public sealed class DamageMarkerSystem : SharedDamageMarkerSystem
                 && _pressure.ApplyModifier((args.Weapon, pressure)))
                 pressureMultiplier = pressure.AppliedModifier;
 
-            //if (boost.BackstabBoost != null
-            //   && _backstab.TryBackstab(uid, args.User, Angle.FromDegrees(45d), playSound: false))
-            //    _damageable.TryChangeDamage(uid,
-            //    (boost.BackstabBoost + boost.Boost) * pressureMultiplier,
-            //    damageable: damageable,
-            //    origin: args.User);
-            //else
+            if (boost.BackstabBoost != null
+              && _backstab.TryBackstab(uid, args.User, Angle.FromDegrees(45d), playSound: false))
+               _damageable.TryChangeDamage(uid,
+               (boost.BackstabBoost + boost.Boost) * pressureMultiplier,
+               damageable: damageable,
+               origin: args.User);
+            else
             _damageable.TryChangeDamage(uid,
             boost.Boost * pressureMultiplier,
             damageable: damageable,
